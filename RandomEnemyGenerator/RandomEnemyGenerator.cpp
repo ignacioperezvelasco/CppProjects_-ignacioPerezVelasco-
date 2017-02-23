@@ -2,43 +2,93 @@
 //
 
 #include "stdafx.h"
-#include "string.h"
+#include "string"
 #include "iostream"
 #include "ctime"
 using namespace std;
-enum enemytype { zombie, vampire, ghost, witch };
-struct enemy {
-	enemytype type;
-	string name;
-	int health;
+
+enum class enemytype { 
+	ZOMBIE, 
+	VAMPIRE, 
+	GHOST,
+	WEREWOLF,
+	MAX
 };
 
-enemy CreateRandomEnemy(enemy a) {
-	string names[]{ "Pepito","Manolo","Krul","Pepa","Hulk","Mongolin" };
-	a.type = enemytype(rand()%4);
-	a.name = names[rand()%6];
-	a.health = rand()%400+100;
+struct enemy {
+	enemytype type;
+	std::string name;
+	int health;
+
+	std::string getEnemyTypeString()
+	{
+		switch (type) {
+		case enemytype::ZOMBIE	:		return "ZOMBIE"		;
+		case enemytype::VAMPIRE	:		return "VAMPIRE"	;
+		case enemytype::GHOST	:		return "GHOST"		;
+		case enemytype::WEREWOLF:		return "WEREWOLF"	;
+		default: return " ";
+		}
+
+		}
+};
+
+bool operator==(const enemy &a, const enemy &b) //para operar los enums con ==
+{
+	return a.name == b.name && a.type == b.type;
 }
 
+static enemy CreateRandomEnemy() 
+{
+		static const int MAX_LIFE(500);//vida maxima
+		static const std::string NAMES[]//possibles nombres
+		{
+			"skrr",
+			"krul",
+			"Veerus",
+			"pa",
+			"comotu"
+		};
+
+	
+	return enemy
+	{
+		static_cast<enemytype>(rand() % static_cast<int>(enemytype::MAX)),
+		NAMES[rand() % (sizeof NAMES / sizeof std::string)],//(sizeof NAMES / sizeof std::string) los bytes que ocupa / cuantos son = cuanto ocula cada uno
+		rand() % MAX_LIFE
+	};
+}
 
 int main()
 {
-	bool soniguals;
-	
-	enemy uno;
-	uno.name = "ja";
-	enemy dos;
-	CreateRandomEnemy(uno);
-	CreateRandomEnemy(dos);
+	srand(static_cast<unsigned>(time(nullptr)));
+	const int MAX_ENEMIES{ 5 };
+	enemy enemies[MAX_ENEMIES];
 
-	if ((uno.type == dos.type) && (uno.name == dos.name))
+	int i{ 0 };
+	while (i < MAX_ENEMIES)
 	{
-		soniguals = true;
+		{
+			enemies[i] = CreateRandomEnemy();
+			int j{ i - 1 };
+			while (j >= 0) {
+				if (enemies[i] == enemies[j])
+				{
+					i--;
+					break;
+				};
+				j--;
+			}
+		};
+		++i;
 	}
-	else
-		soniguals = false;
 
-    return 0;
-	cout << uno.type <<' ' << uno.name << uno.health  << endl	;
+	std::cout << "list of enemies \n";
+	for (auto &enemy : enemies)
+	{
+		std::cout << enemy.name << " is a " << enemy.getEnemyTypeString() << "whose life is " << enemy.health << std::endl;
+ 	}
+
+
 }
 

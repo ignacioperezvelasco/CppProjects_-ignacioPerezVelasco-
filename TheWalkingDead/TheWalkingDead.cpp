@@ -17,16 +17,43 @@ enum class Weapon
 	MAX
 
 };
+std::ostream &operator<< (std::ostream &os, const Weapon &weapon) {
+	switch (weapon)
+	{
+	case Weapon::GUN:			return os << "GUN";				break;
+	case Weapon::SHOTGUN:		return os << "SHOTGUN";			break;
+	case Weapon::REVOLVER:		return os << "REVOLVER";		break;
+	case Weapon::SNIPER:		return os << "SNIPER";			break;
+	case Weapon::MACHINE_GUN:	return os << "MACHINE_GUN";		break;
+	default: return os << "FISTS";
+	}
+
+}
+
 
 class Zombie;
+class Player;
 
-
-class Player {
-
+class Player
+{
+public:
 	//atributos
 	Weapon weapon;
 	float precission;
 	int life;
+
+	Player() :
+		weapon(static_cast<Weapon>(rand() % static_cast<int>(Weapon::MAX))),
+		precission((rand() % 10 / 10.f)),
+		life(100) {};
+
+
+	Player(const Weapon &t_weapon, float t_precission, int t_life) :
+		weapon(t_weapon),
+		precission(t_precission),
+		life(t_life) {};
+
+
 
 	Weapon GetWeapon(int a) {
 		switch (a) {
@@ -54,41 +81,67 @@ class Player {
 		}
 	}
 
-
 	//Metodos
-	void attack(Zombie &) {
-		
-	}	
-	bool isAlive() {
-		if (life > 0)
-			return true;
-		else
-			return false;
-	}
+	void attack(Zombie &) const;
+	bool isAlive() const;
 };
 
 class Zombie {
 	int distanceToPlayer;
 	float speed;
 	float damage;
-	int lifezombie;
+	int life;
+	void attack(Player &) const;
 };
 
-Player player() {
+/*Player player(Player &a) {
 	const int MAX_WEAPON{ 6 };
-	const float MAX_PRECISSION{ 1.0 };
+	const int MAX_PRECISSION{ 100 };
 	const int MAX_LIFE{ 100 };
 
-	return Player
-	{
-	Weapon weapon= Weapon(rand()%MAX_WEAPON);
-	};
+	a.weapon = rand() % MAX_WEAPON;
+	a.precission = rand() % MAX_PRECISSION/100;
+	a.life = rand() % MAX_LIFE;
+}*/
+
+void Player::attack(Zombie &zombie) const
+{
+	zombie.life -=static_cast<int>(static_cast<int>(weapon) * precission);
 }
 
+bool Player::isAlive() const
+{
+	return life > 0;
+}
+
+void Zombie::attack(Player &player)
+{
+	if (distanceToPlayer <= 0)
+		player.life -= static_cast <int>(damage);
+	else
+		distanceToPlayer--;
+}
 
 int main()
 {
+	Player player;
+	const int MAX_ZOMBIES{ 10 };
+	Zombie zombies[MAX_ZOMBIES];
 
+	std::cout << "Player\n\tnitial life:" << player.life <<	", weapon: " << player.weapon << ", precission: " << player.precission << std::endl;
+
+	std::cout << "ZOMBIES ARE COMMING!" << std::endl;
+
+	bool zombiesAreAlive;
+	do {
+		zombiesAreAlive = false;
+		std::cout << "Player\n\tlife: " << player.life << std::endl;
+
+		for (int i{ 0 }; i < MAX_ZOMBIES; ++i)
+		{
+			std::cout << "ZOMBIE[" << i << "]\n\tlife: " zombies[i].life << " distance: " << zombies[i].distance << " speed: " << zombies[i].speed << std::cout endl;
+		}
+	} while (player isAlive() && zombiesAreAlive);
 	
 }
 

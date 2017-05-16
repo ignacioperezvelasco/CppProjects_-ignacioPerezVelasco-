@@ -8,11 +8,13 @@ MyForwardList::MyForwardList():
 	s{ snext }
 {
 }
+
 MyForwardList::MyForwardList(int size, int numero):
 	
 	snext{rellenar(size,numero)},
 	s{ snext }
 {}
+
 MyForwardList::node* MyForwardList::rellenar(int size, int numero) {
 
 	MyForwardList::node* nod= new MyForwardList::node{ numero,nullptr };
@@ -39,7 +41,7 @@ void MyForwardList::insert_after(int punt, int a)
 	{
 		t = t->next;
 	}
-	t->next->info = a;
+	t->next = new MyForwardList::node{ a,t->next};
 }
 
 MyForwardList::node* MyForwardList::before_begin()

@@ -13,7 +13,8 @@ MyForwardList::MyForwardList(int size, int numero):
 	
 	snext{rellenar(size,numero)},
 	s{ snext }
-{}
+{if (size == 0) { MyForwardList::MyForwardList(); }
+	}
 
 MyForwardList::node* MyForwardList::rellenar(int size, int numero) {
 
